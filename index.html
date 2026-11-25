@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="artifact-type" content="tool">
+  <meta name="design-style" content="atelier">
+  <title>Personal Color & Style Assistant — Armocromia & Smart Wardrobe</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..600;1,6..96,400..600&family=IBM+Plex+Mono:wght@400;500&family=Jost:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://unpkg.com/lucide@1.43.0/dist/umd/lucide.min.js"></script>
+
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <!-- Editorial Masthead -->
+    <header class="pb-4">
+      <div class="flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <p class="label kicker">Atelier Chroma · Armocromia · On-Device Color Science &amp; Style Studio</p>
+          <h1 class="display mt-1">ATELIER CHROMA — Personal Color &amp; <em>Style</em> Assistant</h1>
+        </div>
+        <div class="flex flex-wrap items-center gap-3">
+          <button type="button" class="btn-ghost btn-sm" onclick="navigateTo('profile')" id="header-profile-badge" aria-label="View Active Color Profile">
+            <span class="inline-block w-3 h-3 border border-black" id="header-skin-chip"></span>
+            <span id="header-profile-text">Warm · Soft Autumn</span>
+          </button>
+          <button type="button" class="btn-secondary btn-sm mobile-menu-toggle" onclick="toggleMobileNav()" id="mobile-nav-btn" aria-expanded="false" aria-controls="main-nav">
+            <i data-lucide="menu" class="w-4 h-4" aria-hidden="true"></i>
+            <span>Menu</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 8-Page Navigation Bar -->
+      <nav id="main-nav" class="nav-bar" aria-label="Primary sections">
+        <button type="button" class="nav-link is-active" data-page="dashboard" onclick="navigateTo('dashboard')">Dashboard</button>
+        <button type="button" class="nav-link" data-page="analysis" onclick="navigateTo('analysis')">AI Color Analysis</button>
+        <button type="button" class="nav-link" data-page="palette" onclick="navigateTo('palette')">My Color Palette</button>
+        <button type="button" class="nav-link" data-page="scanner" onclick="navigateTo('scanner')">Clothing Color Scanner</button>
+        <button type="button" class="nav-link" data-page="outfits" onclick="navigateTo('outfits')">Outfit Recommendations</button>
+        <button type="button" class="nav-link" data-page="fabrics" onclick="navigateTo('fabrics')">Fabric Guide</button>
+        <button type="button" class="nav-link" data-page="saved" onclick="navigateTo('saved')">Saved Styles</button>
+        <button type="button" class="nav-link" data-page="profile" onclick="navigateTo('profile')">Profile</button>
+      </nav>
+    </header>
+
+    <main id="main-content" class="mt-6">
+
+      <!-- =========================================================
+           PAGE 1: DASHBOARD
+           ========================================================= -->
+      <section id="view-dashboard" class="view-section is-visible" aria-labelledby="dash-title">
+        <div class="flex flex-wrap items-end justify-between gap-4 pb-6">
+          <div>
+            <span class="tag-taupe" id="dash-greeting-time">Atelier Overview · Elena Vance</span>
+            <h2 id="dash-title" class="headline mt-1">Your chromatic <em>signature</em></h2>
+            <p class="lede mt-2" id="dash-lede">
+              Balanced golden warmth with muted saturation. Earth-grounded neutrals and softened botanical hues brighten the complexion without overpowering natural contrast.
+            </p>
+          </div>
+          <div class="flex flex-wrap gap-3">
+            <button type="button" class="btn-primary" onclick="navigateTo('analysis')">
+              <i data-lucide="scan-face" class="w-4 h-4" aria-hidden="true"></i>
+              <span>Analyze Selfie</span>
+            </button>
+            <button type="button" class="btn-secondary" onclick="navigateTo('scanner')">
+              <i data-lucide="camera" class="w-4 h-4" aria-hidden="true"></i>
+              <span>Scan Garment</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 4 Headline Metrics -->
+        <div class="metrics-row mb-6">
+          <div class="ruled-top">
+            <div class="label">Skin Undertone</div>
+            <div class="headline mt-2" id="dash-undertone">Warm</div>
+            <div class="tag-taupe mt-1" id="dash-undertone-note">Golden / Peachy Cast</div>
+          </div>
+          <div class="ruled-top">
+            <div class="label">12-Season Profile</div>
+            <div class="headline mt-2" id="dash-season">Soft Autumn</div>
+            <div class="tag-taupe mt-1" id="dash-axes">Medium · Muted Chroma</div>
+          </div>
+          <div class="ruled-top">
+            <div class="label">Metals &amp; Whites</div>
+            <div class="headline mt-2" id="dash-metals">Brushed Gold</div>
+            <div class="tag-taupe mt-1" id="dash-white-note">Cream &amp; Raw Ivory</div>
+          </div>
+          <div class="ruled-top">
+            <div class="label">Wardrobe Archive</div>
+            <div class="headline mt-2 mono" id="dash-saved-count">0 / 0 / 0</div>
+            <div class="tag-taupe mt-1">Colors · Outfits · Scans</div>
+          </div>
+        </div>
+
+        <!-- Daily Personalized Style Inspiration Card -->
+        <div class="daily-inspo-card mb-10">
+          <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+            <span class="tag-taupe" id="dash-inspo-date">Today's Atelier Formula &amp; Inspiration</span>
+            <span class="mono text-xs text-[var(--on-surface-variant)]" id="dash-inspo-season">Soft Autumn · Seasonal Pairing</span>
+          </div>
+          <h3 class="subhead" id="dash-inspo-title">Tonal Earth Harmony: Terracotta &amp; Raw Ivory</h3>
+          <p class="text-sm text-[var(--on-surface-variant)] mt-1" id="dash-inspo-text">
+            Today, pair fine textured knitwear with a warm neutral foundation. Accenting with brushed brass or gold jewelry reflects natural skin radiance.
+          </p>
+        </div>
+
+        <!-- Asymmetric Split: Signature Swatches + 3-Axis Chromatic Telemetry -->
+        <div class="split-asymmetric">
+          <div>
+            <div class="flex items-center justify-between ruled-top mb-4">
+              <div>
+                <span class="label">Curated Signature Swatches</span>
+                <p class="text-sm text-[var(--on-surface-variant)] mt-1">Click any color to preview virtual draping or save to your wardrobe.</p>
+              </div>
+              <button type="button" class="btn-ghost btn-sm" onclick="navigateTo('palette')">Full 18-Color Palette</button>
+            </div>
+            <div id="dash-swatch-preview" class="swatch-grid"></div>
+
+            <div class="ruled-top mt-8">
+              <div class="flex items-center justify-between mb-4">
+                <span class="label">Colors to Avoid Near the Face</span>
+                <span class="tag-taupe">Contrast &amp; Temperature Clash</span>
+              </div>
+              <div id="dash-avoid-preview" class="grid grid-cols-1 sm:grid-cols-3 gap-4"></div>
+            </div>
+          </div>
+
+          <!-- Chromatic Axes SVG Plate -->
+          <figure class="panel-stone m-0">
+            <div class="flex items-center justify-between mb-3">
+              <span class="label">Three-Axis Armocromia Matrix</span>
+              <span class="mono" id="dash-hex-chip">#D2A684</span>
+            </div>
+            <div id="dash-axes-svg-container" style="min-height: 240px;"></div>
+            <figcaption>
+              <span class="label">Fig. 1 — Hue, Value &amp; Chroma Coordinates</span>
+              Seasonal color analysis plots skin hue temperature (Warm–Cool), overall value depth (Light–Deep), and natural saturation (Muted–Clear) to prevent washout.
+            </figcaption>
+          </figure>
+        </div>
+
+        <!-- Quick Actions Strip -->
+        <div class="card-grid mt-10">
+          <div class="ruled-top">
+            <span class="tag-taupe">01 · Color Match</span>
+            <h3 class="subhead mt-1">In-Store Garment Scanner</h3>
+            <p class="text-sm text-[var(--on-surface-variant)] mt-2">Upload a clothing photo or sample any fabric hue to calculate CIELAB ΔE distance against your palette.</p>
+            <button type="button" class="btn-ghost btn-sm mt-4" onclick="navigateTo('scanner')">Open Scanner</button>
+          </div>
+          <div class="ruled-top">
+            <span class="tag-taupe">02 · Curated Looks</span>
+            <h3 class="subhead mt-1">Occasion Outfit Pairing</h3>
+            <p class="text-sm text-[var(--on-surface-variant)] mt-2">Explore tailored, draped, and minimalist outfit formulas built around your seasonal neutrals and accents.</p>
+            <button type="button" class="btn-ghost btn-sm mt-4" onclick="navigateTo('outfits')">Browse Outfits</button>
+          </div>
+          <div class="ruled-top">
+            <span class="tag-taupe">03 · Textile Light</span>
+            <h3 class="subhead mt-1">Fabric &amp; Texture Guide</h3>
+            <p class="text-sm text-[var(--on-surface-variant)] mt-2">Learn how cotton, linen, denim, satin, and chiffon reflect light against your natural chroma and contrast.</p>
+            <button type="button" class="btn-ghost btn-sm mt-4" onclick="navigateTo('fabrics')">Read Fabric Guide</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- =========================================================
+           PAGE 2: AI COLOR ANALYSIS
+           ========================================================= -->
+      <section id="view-analysis" class="view-section" aria-labelledby="analysis-title">
+        <div class="flex flex-wrap items-end justify-between gap-4 pb-6">
+          <div>
+            <span class="tag-taupe">On-Device Computer Vision</span>
+            <h2 id="analysis-title" class="headline mt-1">Selfie &amp; undertone <em>analysis</em></h2>
+            <p class="lede mt-2">
+              All processing runs locally in your browser. Skin pixels are isolated via YCrCb &amp; HSV thresholds, clustered with K-Means, and mapped to CIELAB hue coordinates.
+            </p>
+          </div>
+          <div class="flex flex-wrap gap-2">
+            <button type="button" class="btn-secondary btn-sm active-filter" id="mode-btn-cv" onclick="setAnalysisMode('cv')">Photo CV Analyzer</button>
+            <button type="button" class="btn-secondary btn-sm" id="mode-btn-quiz" onclick="setAnalysisMode('quiz')">Guided 5-Step Test</button>
+          </div>
+        </div>
+
+        <!-- MODE A: COMPUTER VISION SELFIE UPLOAD -->
+        <div id="analysis-mode-cv" class="split-asymmetric">
+          <div class="panel-stone">
+            <div class="flex flex-wrap items-center justify-between gap-3 mb-2">
+              <span class="label">1. Portrait Input &amp; Skin Segmentation</span>
+              <div class="flex flex-wrap gap-2">
+                <label for="selfie-file-input" class="btn-primary btn-sm" style="cursor:pointer;">
+                  <i data-lucide="upload" class="w-4 h-4" aria-hidden="true"></i>
+                  <span>Upload Selfie</span>
+                </label>
+                <input type="file" id="selfie-file-input" accept="image/*" class="sr-only" onchange="handleSelfieUpload(this)">
+              </div>
+            </div>
+
+            <div class="flex items-center gap-2 mb-4">
+              <span id="cv-source-badge" class="status-badge status-positive">On-Device Browser Vision</span>
+              <span class="text-xs text-[var(--on-surface-variant)]" id="cv-source-note">Direct pixel extraction in browser memory.</span>
+            </div>
+
+            <!-- Demo Portrait Presets -->
+            <div class="mb-4">
+              <div class="label text-[var(--on-surface-variant)] mb-2">Or test pipeline with calibrated studio portraits:</div>
+              <div class="flex flex-wrap gap-2">
+                <button type="button" class="btn-ghost btn-sm" onclick="loadDemoPortrait('warm')">Golden Warm</button>
+                <button type="button" class="btn-ghost btn-sm" onclick="loadDemoPortrait('cool')">Porcelain Cool</button>
+                <button type="button" class="btn-ghost btn-sm" onclick="loadDemoPortrait('neutral')">Deep Neutral</button>
+                <button type="button" class="btn-ghost btn-sm" onclick="loadDemoPortrait('olive')">Olive Warm-Neutral</button>
+              </div>
+            </div>
+
+            <!-- Canvas Viewport + View Layers -->
+            <div class="canvas-frame" id="selfie-canvas-frame">
+              <div class="canvas-drop-hint" id="selfie-drop-hint">
+                <i data-lucide="upload-cloud" class="w-8 h-8" aria-hidden="true"></i>
+                <span class="label">Drop Portrait Image to Analyze</span>
+              </div>
+              <canvas id="selfie-canvas" width="460" height="360" onclick="handleSelfieCanvasClick(event)" title="Click any cheek or jawline area to re-sample skin tone"></canvas>
+            </div>
+
+            <div class="flex flex-wrap items-center justify-between gap-3 mt-4">
+              <div class="flex flex-wrap gap-2">
+                <button type="button" class="btn-ghost btn-sm active-filter" id="cv-layer-orig" onclick="setCvLayer('original')">Original + ROI</button>
+                <button type="button" class="btn-ghost btn-sm" id="cv-layer-mask" onclick="setCvLayer('mask')">YCrCb / HSV Skin Mask</button>
+              </div>
+              <span class="text-xs text-[var(--on-surface-variant)]">Tip: Click on cheek or jaw to sample a custom spot.</span>
+            </div>
+
+            <div id="selfie-upload-note" class="mt-3 text-sm text-[var(--on-surface-variant)]">
+              Indirect natural daylight without heavy makeup gives the most reliable skin hue measurement.
+            </div>
+          </div>
+
+          <!-- Right Column: Live CV Pipeline Output -->
+          <div class="flex flex-col gap-6">
+            <div class="ruled-top">
+              <span class="label">2. Detected Undertone &amp; Season</span>
+              <div class="flex items-center gap-4 mt-3">
+                <div id="cv-skin-swatch" class="w-16 h-16 border border-black shrink-0"></div>
+                <div>
+                  <div class="headline" id="cv-result-undertone">Warm Undertone</div>
+                  <div class="tag-taupe mt-1" id="cv-result-season">Soft Autumn · Confidence 91%</div>
+                  <div class="mono text-[var(--on-surface-variant)] mt-1" id="cv-result-hex">HEX #D2A684 · L* 71.4 · a* 11.2 · b* 21.8</div>
+                </div>
+              </div>
+              <p class="text-sm text-[var(--on-surface-variant)] mt-3" id="cv-result-explanation">
+                Positive b* (+21.8) dominates over a* (+11.2), indicating golden-peach melanin reflectance with moderate contrast.
+              </p>
+            </div>
+
+            <!-- K-Means Clusters -->
+            <div class="ruled-top">
+              <span class="label">3. K-Means Dominant Skin Clusters (k = 3)</span>
+              <div id="cv-kmeans-clusters" class="grid grid-cols-3 gap-3 mt-3"></div>
+            </div>
+
+            <!-- Telemetry Table -->
+            <div class="ruled-top">
+              <span class="label">4. Color Space Metrics</span>
+              <table class="atelier-table mt-2">
+                <thead>
+                  <tr>
+                    <th>Metric</th>
+                    <th>Measured Value</th>
+                    <th>Signal</th>
+                  </tr>
+                </thead>
+                <tbody id="cv-telemetry-rows">
+                  <tr>
+                    <td>Skin Mask Coverage</td>
+                    <td class="mono">42.8%</td>
+                    <td>YCrCb &amp; HSV Passed</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="flex flex-wrap gap-3 pt-2">
+              <button type="button" class="btn-primary" onclick="applyCvResultToProfile()">
+                <i data-lucide="check" class="w-4 h-4" aria-hidden="true"></i>
+                <span>Apply to My Profile</span>
+              </button>
+              <button type="button" class="btn-secondary" onclick="drapeDetectedSkinTone()">
+                <i data-lucide="palette" class="w-4 h-4" aria-hidden="true"></i>
+                <span>Virtual Draping</span>
+              </button>
+              <button type="button" class="btn-ghost" onclick="navigateTo('palette')">View 18-Color Palette</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- MODE B: GUIDED 5-STEP AT-HOME CHECK -->
+        <div id="analysis-mode-quiz" class="split-asymmetric" style="display: none;">
+          <div class="panel-stone">
+            <span class="label">Controlled Daylight Self-Check</span>
+            <p class="text-sm text-[var(--on-surface-variant)] mt-2 mb-6">
+              Useful when you don't have a daylight selfie handy or want to verify an olive undertone. Stand near a window in indirect daylight with bare skin.
+            </p>
+
+            <div class="flex flex-col gap-5">
+              <div class="field-group">
+                <label for="quiz-veins" class="label">1. Inner Wrist Veins in Daylight</label>
+                <select id="quiz-veins" class="field-select" onchange="evaluateGuidedQuiz()">
+                  <option value="warm">Mostly greenish or olive-green</option>
+                  <option value="cool">Mostly blue or violet-purple</option>
+                  <option value="neutral">Equal mix of blue and green, or hard to tell</option>
+                </select>
+              </div>
+
+              <div class="field-group">
+                <label for="quiz-metal" class="label">2. Jewelry Metal Harmony</label>
+                <select id="quiz-metal" class="field-select" onchange="evaluateGuidedQuiz()">
+                  <option value="warm">Yellow gold, brass, or copper melts into skin</option>
+                  <option value="cool">Silver, platinum, or white gold brightens skin</option>
+                  <option value="neutral">Both metals look balanced; finish matters more</option>
+                </select>
+              </div>
+
+              <div class="field-group">
+                <label for="quiz-fabric" class="label">3. Stark White vs. Warm Cream Fabric</label>
+                <select id="quiz-fabric" class="field-select" onchange="evaluateGuidedQuiz()">
+                  <option value="warm">Cream / ivory softens skin; optic white feels harsh</option>
+                  <option value="cool">Crisp pure white brightens skin; cream looks dull</option>
+                  <option value="neutral">Soft off-white and pure white work similarly well</option>
+                </select>
+              </div>
+
+              <div class="field-group">
+                <label for="quiz-foundation" class="label">4. Foundation &amp; Shade Behaviour</label>
+                <select id="quiz-foundation" class="field-select" onchange="evaluateGuidedQuiz()">
+                  <option value="warm">Warm / golden bases match best; pink looks ashy</option>
+                  <option value="cool">Cool / rosy bases match best; yellow looks sallow</option>
+                  <option value="olive">Standard shades often look too orange OR too pink (greenish cast)</option>
+                  <option value="neutral">Neutral (N) bases match seamlessly</option>
+                </select>
+              </div>
+
+              <div class="field-group">
+                <label for="quiz-contrast" class="label">5. Overall Value &amp; Hair–Eye–Skin Contrast</label>
+                <select id="quiz-contrast" class="field-select" onchange="evaluateGuidedQuiz()">
+                  <option value="light-soft">Light &amp; Soft (low contrast, blended features)</option>
+                  <option value="medium-warm">Medium &amp; Muted (soft contrast, earthy warmth)</option>
+                  <option value="deep-clear">Deep or High-Contrast (dark hair/eyes against clear skin)</option>
+                  <option value="bright-clear">Bright &amp; Clear (luminous eyes, distinct contrast)</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="ruled-top">
+            <span class="label">Guided Assessment Result</span>
+            <div class="headline mt-3" id="quiz-result-title">Warm Undertone · Soft Autumn</div>
+            <div class="tag-taupe mt-1" id="quiz-result-olive">Olive Flag: Standard Warm</div>
+            <p class="text-sm text-[var(--on-surface-variant)] mt-3" id="quiz-result-summary">
+              Three or more warm daylight signals align: golden warmth, cream fabric harmony, and brushed gold metals.
+            </p>
+            <div class="ruled-stone mt-5">
+              <span class="label">Why Single Manual Tests Mislead</span>
+              <ul class="text-sm text-[var(--on-surface-variant)] mt-2 pl-4 list-disc space-y-1">
+                <li>Medium, tan, and deep skin naturally tints veins green regardless of cool undertone.</li>
+                <li>Indoor warm bulbs trigger chromatic adaptation in your eyes.</li>
+                <li>Olive skin carries a subtle green-gray cast over warmth that frequently ties the jewelry test.</li>
+              </ul>
+            </div>
+            <div class="flex flex-wrap gap-3 mt-6">
+              <button type="button" class="btn-primary" onclick="applyQuizResultToProfile()">Apply Guided Result</button>
+              <button type="button" class="btn-secondary" onclick="navigateTo('palette')">Open My Palette</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- =========================================================
+           PAGE 3: MY COLOR PALETTE
+           ========================================================= -->
+      <section id="view-palette" class="view-section" aria-labelledby="palette-title">
+        <div class="flex flex-wrap items-end justify-between gap-4 pb-6">
+          <div>
+            <span class="tag-taupe">12-Season Armocromia Library</span>
+            <h2 id="palette-title" class="headline mt-1">My color <em>palette</em></h2>
+            <p class="lede mt-2" id="palette-subtitle">
+              Curated shades calibrated for Soft Autumn. Click any swatch to drape it against your portrait, copy its HEX code, or save it.
+            </p>
+          </div>
+          <div class="field-group" style="min-width: 260px;">
+            <div class="flex items-center justify-between gap-2">
+              <label for="season-browser-select" class="label">Explore 12 Seasons</label>
+              <span id="palette-status-pill" class="status-badge status-positive">Active Profile</span>
+            </div>
+            <select id="season-browser-select" class="field-select" onchange="handleSeasonBrowse(this.value)"></select>
+          </div>
+        </div>
+
+        <!-- Virtual Draping Studio -->
+        <div class="split-asymmetric mb-10">
+          <div>
+            <div class="flex flex-wrap items-center justify-between gap-3 mb-3">
+              <div>
+                <span class="label">Virtual Color Draping Studio</span>
+                <span class="mono ml-2 text-[var(--secondary)]" id="drape-active-label">Terracotta Clay · #B86B4B</span>
+              </div>
+              <div class="flex flex-wrap gap-2">
+                <button type="button" class="btn-ghost btn-sm" id="drape-compare-toggle" onclick="toggleDrapeCompare()">Compare Side-by-Side</button>
+                <button type="button" class="btn-ghost btn-sm" id="drape-set-mine-btn" onclick="setActiveSeasonAsMine()">Set Viewed Season as Mine</button>
+              </div>
+            </div>
+
+            <!-- Single Drape View -->
+            <div id="drape-single-view" class="drape-stage">
+              <div id="drape-portrait-slot" class="w-40 h-40 rounded-full overflow-hidden border-2 border-white bg-[var(--surface-container-low)] flex items-center justify-center"></div>
+              <div class="mt-4 px-4 py-1 bg-[var(--background)] border border-[var(--outline)]">
+                <span class="label" id="drape-verdict-pill">Harmonic Match</span>
+              </div>
+            </div>
+
+            <!-- Side-by-Side Comparison View -->
+            <div id="drape-compare-view" class="drape-stage-compare" style="display: none;">
+              <div class="drape-half-left">
+                <div id="drape-portrait-left" class="w-28 h-28 rounded-full overflow-hidden border-2 border-white bg-[var(--surface-container-low)] flex items-center justify-center"></div>
+                <div class="mt-3 px-3 py-1 bg-[var(--background)] border border-[var(--outline)]">
+                  <span class="label" id="drape-left-name">Palette Shade</span>
+                </div>
+              </div>
+              <div class="drape-half-right">
+                <div id="drape-portrait-right" class="w-28 h-28 rounded-full overflow-hidden border-2 border-white bg-[var(--surface-container-low)] flex items-center justify-center"></div>
+                <div class="mt-3 px-3 py-1 bg-[var(--background)] border border-[var(--outline)]">
+                  <span class="label" id="drape-right-name">Avoid Contrast</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Makeup, Metals & Hair Harmony -->
+          <div class="panel-stone">
+            <span class="label">Beauty, Metals &amp; Hair Harmony</span>
+            <h3 class="subhead mt-1" id="palette-season-heading">Soft Autumn Profile</h3>
+            <p class="text-sm text-[var(--on-surface-variant)] mt-2" id="palette-season-desc"></p>
+
+            <div class="ruled-stone mt-4 grid grid-cols-1 gap-3" id="palette-beauty-list"></div>
+          </div>
+        </div>
+
+        <!-- Categorized Swatches -->
+        <div class="space-y-10">
+          <div>
+            <div class="flex items-center justify-between ruled-top mb-4">
+              <span class="label">Power Neutrals (Wardrobe Foundations)</span>
+              <span class="tag-taupe">Coats · Trousers · Knitwear</span>
+            </div>
+            <div id="palette-neutrals-grid" class="swatch-grid"></div>
+          </div>
+
+          <div>
+            <div class="flex items-center justify-between ruled-top mb-4">
+              <span class="label">Signature &amp; Statement Shades</span>
+              <span class="tag-taupe">Tops · Dresses · Scarves</span>
+            </div>
+            <div id="palette-accents-grid" class="swatch-grid"></div>
+          </div>
+
+          <div>
+            <div class="flex items-center justify-between ruled-top mb-4">
+              <span class="label">Shades to Avoid Near the Face</span>
+              <span class="tag-taupe">May Wash Out or Cast Shadows</span>
+            </div>
+            <div id="palette-avoid-grid" class="swatch-grid"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- =========================================================
+           PAGE 4: CLOTHING COLOR SCANNER
+           ========================================================= -->
+      <section id="view-scanner" class="view-section" aria-labelledby="scanner-title">
+        <div class="flex flex-wrap items-end justify-between gap-4 pb-6">
+          <div>
+            <span class="tag-taupe">In-Store Color Match · CIELAB ΔE</span>
+            <h2 id="scanner-title" class="headline mt-1">Clothing color <em>scanner</em></h2>
+            <p class="lede mt-2">
+              Photograph or upload any garment, click to sample its fabric color, and compute perceptual CIELAB distance against your personal palette before buying.
+            </p>
+          </div>
+        </div>
+
+        <div class="split-asymmetric">
+          <!-- Left: Garment Photo / Color Sampler -->
+          <div class="panel-stone">
+            <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+              <span class="label">1. Sample Garment Color</span>
+              <label for="garment-file-input" class="btn-primary btn-sm" style="cursor:pointer;">
+                <i data-lucide="upload" class="w-4 h-4" aria-hidden="true"></i>
+                <span>Upload Garment Photo</span>
+              </label>
+              <input type="file" id="garment-file-input" accept="image/*" class="sr-only" onchange="handleGarmentUpload(this)">
+            </div>
+
+            <div class="canvas-frame" id="garment-canvas-frame">
+              <div class="canvas-drop-hint" id="garment-drop-hint">
+                <i data-lucide="upload-cloud" class="w-8 h-8" aria-hidden="true"></i>
+                <span class="label">Drop Garment Photo to Sample</span>
+              </div>
+              <div id="garment-loupe" class="sampler-loupe"></div>
+              <canvas id="garment-canvas" width="440" height="300" onclick="handleGarmentCanvasClick(event)" onmousemove="handleGarmentMouseMove(event)" onmouseleave="hideGarmentLoupe()" title="Click anywhere on the garment to sample its color"></canvas>
+            </div>
+
+            <!-- Auto-Detected Dominant Garment Colors -->
+            <div class="mt-4 pt-3 border-t border-[var(--outline-variant)]">
+              <div class="flex items-center justify-between mb-2">
+                <span class="label">Auto-Detected Garment Hues (K-Means)</span>
+                <button type="button" class="btn-ghost btn-sm" onclick="extractGarmentDominantHues()">Re-cluster Hues</button>
+              </div>
+              <div id="garment-dominant-swatches" class="flex flex-wrap gap-2"></div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-5 items-end">
+              <div class="field-group">
+                <label for="scanner-color-picker" class="label">Direct Color Picker</label>
+                <div class="flex items-center gap-3">
+                  <input type="color" id="scanner-color-picker" value="#B86B4B" class="w-12 h-11 border border-[var(--outline)] bg-transparent cursor-pointer" oninput="scanHexColor(this.value, 'Custom Swatch')">
+                  <input type="text" id="scanner-hex-input" value="#B86B4B" maxlength="7" class="field-input mono" aria-label="Garment HEX Code" oninput="handleScannerHexInput(this.value)">
+                </div>
+              </div>
+              <div class="field-group">
+                <label for="scanner-garment-name" class="label">Garment Label</label>
+                <input type="text" id="scanner-garment-name" value="Terracotta Linen Blazer" class="field-input">
+              </div>
+            </div>
+
+            <!-- Preset Store Garments -->
+            <div class="mt-5">
+              <div class="label text-[var(--on-surface-variant)] mb-2">Quick-Scan Store Garment Presets:</div>
+              <div class="flex flex-wrap gap-2" id="scanner-presets"></div>
+            </div>
+          </div>
+
+          <!-- Right: Match Score & Styling Advice -->
+          <div class="flex flex-col gap-6">
+            <div class="ruled-top">
+              <div class="flex items-center justify-between">
+                <span class="label">2. Palette Compatibility Verdict</span>
+                <span id="scan-verdict-badge" class="status-badge status-positive">Harmonic Match</span>
+              </div>
+
+              <div class="flex items-baseline gap-4 mt-4">
+                <div class="display" id="scan-score-value">94%</div>
+                <div class="text-sm text-[var(--on-surface-variant)]" id="scan-delta-label">CIELAB ΔE = 4.2 · Nearest: Terracotta</div>
+              </div>
+
+              <!-- Side-by-Side Swatch Match -->
+              <div class="grid grid-cols-2 gap-4 mt-5">
+                <div class="ruled-stone">
+                  <div class="label">Scanned Garment</div>
+                  <div id="scan-sample-box" class="w-full h-16 border border-[var(--outline-variant)] mt-2"></div>
+                  <div class="mono mt-1" id="scan-sample-hex">#B86B4B</div>
+                </div>
+                <div class="ruled-stone">
+                  <div class="label">Closest Palette Match</div>
+                  <div id="scan-nearest-box" class="w-full h-16 border border-[var(--outline-variant)] mt-2"></div>
+                  <div class="mono mt-1" id="scan-nearest-name">Terracotta · #B86B4B</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Color Space Telemetry -->
+            <div class="ruled-top">
+              <span class="label">3. Perceptual Color Space Coordinates</span>
+              <table class="atelier-table mt-2">
+                <thead>
+                  <tr>
+                    <th>Color Space</th>
+                    <th>Measured Value</th>
+                    <th>Interpretation</th>
+                  </tr>
+                </thead>
+                <tbody id="scan-telemetry-rows">
+                  <tr>
+                    <td>HEX &amp; RGB</td>
+                    <td class="mono" id="scan-telem-rgb">#B86B4B · RGB(184, 107, 75)</td>
+                    <td>Sampled Fabric Tone</td>
+                  </tr>
+                  <tr>
+                    <td>HSL Space</td>
+                    <td class="mono" id="scan-telem-hsl">H: 18° · S: 43% · L: 51%</td>
+                    <td>Warm Terracotta Hue</td>
+                  </tr>
+                  <tr>
+                    <td>CIELAB (L*a*b*)</td>
+                    <td class="mono" id="scan-telem-lab">L* 52.8 · a* 27.4 · b* 32.1</td>
+                    <td>ΔE Euclidean Perceptual Base</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="ruled-top">
+              <span class="label">4. Stylist Reasoning &amp; Pairing Tip</span>
+              <p class="text-sm text-[var(--on-surface-variant)] mt-2" id="scan-advice-text">
+                This shade sits tightly inside your warm, muted gamut. It balances natural skin warmth and softens under-eye shadows.
+              </p>
+              <div class="mt-4 flex flex-wrap gap-3">
+                <button type="button" class="btn-primary" onclick="saveCurrentScan()">
+                  <i data-lucide="bookmark-plus" class="w-4 h-4" aria-hidden="true"></i>
+                  <span>Save Scan Result</span>
+                </button>
+                <button type="button" class="btn-secondary" onclick="drapeScannedColor()">
+                  <i data-lucide="palette" class="w-4 h-4" aria-hidden="true"></i>
+                  <span>Drape on My Portrait</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="ruled-top">
+              <span class="label">Top 3 Nearest Shades in Your Palette</span>
+              <div id="scan-top-matches" class="grid grid-cols-3 gap-3 mt-3"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- =========================================================
+           PAGE 5: OUTFIT RECOMMENDATIONS
+           ========================================================= -->
+      <section id="view-outfits" class="view-section" aria-labelledby="outfits-title">
+        <div class="flex flex-wrap items-end justify-between gap-4 pb-6">
+          <div>
+            <span class="tag-taupe">Tailored · Draped · Minimalist</span>
+            <h2 id="outfits-title" class="headline mt-1">Outfit <em>recommendations</em></h2>
+            <p class="lede mt-2">
+              Complete look formulas dynamically tinted with your seasonal palette. Filter by occasion, silhouette, and color harmony, then save looks to your wardrobe archive.
+            </p>
+          </div>
+        </div>
+
+        <!-- Filters & Search Bar -->
+        <div class="panel-white-ruled space-y-4 mb-8">
+          <div class="flex flex-wrap items-center justify-between gap-4">
+            <div class="flex flex-wrap gap-2" role="group" aria-label="Filter by occasion">
+              <button type="button" class="btn-ghost btn-sm active-filter" data-occ="all" onclick="setOutfitOccasion('all')">All Occasions</button>
+              <button type="button" class="btn-ghost btn-sm" data-occ="casual" onclick="setOutfitOccasion('casual')">Casual</button>
+              <button type="button" class="btn-ghost btn-sm" data-occ="work" onclick="setOutfitOccasion('work')">Work &amp; Office</button>
+              <button type="button" class="btn-ghost btn-sm" data-occ="party" onclick="setOutfitOccasion('party')">Evening &amp; Party</button>
+              <button type="button" class="btn-ghost btn-sm" data-occ="wedding" onclick="setOutfitOccasion('wedding')">Formal &amp; Gala</button>
+              <button type="button" class="btn-ghost btn-sm" data-occ="weekend" onclick="setOutfitOccasion('weekend')">Weekend</button>
+              <button type="button" class="btn-ghost btn-sm" data-occ="capsule" onclick="setOutfitOccasion('capsule')">Capsule Wardrobe</button>
+            </div>
+            <div class="search-input-wrapper">
+              <i data-lucide="search" class="w-4 h-4 search-icon" aria-hidden="true"></i>
+              <input type="text" id="outfit-search-input" class="field-input text-sm" placeholder="Search looks, fabrics..." oninput="handleOutfitSearch(this.value)">
+            </div>
+          </div>
+
+          <div class="flex flex-wrap items-center justify-between gap-4 pt-2 border-t border-[var(--outline-variant)]">
+            <div class="flex flex-wrap gap-2" role="group" aria-label="Filter by color harmony">
+              <span class="label self-center mr-1 text-[var(--secondary)]">Harmony:</span>
+              <button type="button" class="btn-ghost btn-sm active-filter" data-harmony="all" onclick="setOutfitHarmony('all')">All Harmonies</button>
+              <button type="button" class="btn-ghost btn-sm" data-harmony="monochromatic" onclick="setOutfitHarmony('monochromatic')">Monochromatic</button>
+              <button type="button" class="btn-ghost btn-sm" data-harmony="complementary" onclick="setOutfitHarmony('complementary')">Complementary</button>
+              <button type="button" class="btn-ghost btn-sm" data-harmony="analogous" onclick="setOutfitHarmony('analogous')">Analogous</button>
+              <button type="button" class="btn-ghost btn-sm" data-harmony="triadic" onclick="setOutfitHarmony('triadic')">Triadic</button>
+            </div>
+
+            <div class="field-group" style="min-width: 210px;">
+              <label for="outfit-silhouette-filter" class="label">Silhouette</label>
+              <select id="outfit-silhouette-filter" class="field-select" onchange="renderOutfits()">
+                <option value="all">All Silhouettes</option>
+                <option value="tailored">Tailored / Menswear</option>
+                <option value="draped">Draped / Womenswear</option>
+                <option value="minimal">Gender-Neutral Minimal</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div id="outfits-grid" class="card-grid"></div>
+      </section>
+
+      <!-- =========================================================
+           PAGE 6: FABRIC GUIDE
+           ========================================================= -->
+      <section id="view-fabrics" class="view-section" aria-labelledby="fabrics-title">
+        <div class="flex flex-wrap items-end justify-between gap-4 pb-6">
+          <div>
+            <span class="tag-taupe">Surface Light · Weave &amp; Drape</span>
+            <h2 id="fabrics-title" class="headline mt-1">Fabric &amp; texture <em>guide</em></h2>
+            <p class="lede mt-2">
+              Color never exists without texture. Matte weaves absorb light to calm soft complexions, while high-luster satins amplify crisp contrast.
+            </p>
+          </div>
+          <div class="search-input-wrapper">
+            <i data-lucide="search" class="w-4 h-4 search-icon" aria-hidden="true"></i>
+            <input type="text" id="fabric-search-input" class="field-input text-sm" placeholder="Search linen, cashmere, silk..." oninput="handleFabricSearch(this.value)">
+          </div>
+        </div>
+
+        <div class="panel-white-ruled flex flex-wrap items-center justify-between gap-3 mb-8">
+          <div class="flex flex-wrap gap-2">
+            <button type="button" class="btn-ghost btn-sm active-filter" data-fab="all" onclick="setFabricFilter('all')">All Textiles</button>
+            <button type="button" class="btn-ghost btn-sm" data-fab="recommended" onclick="setFabricFilter('recommended')">Best for My Season</button>
+            <button type="button" class="btn-ghost btn-sm" data-fab="matte" onclick="setFabricFilter('matte')">Matte</button>
+            <button type="button" class="btn-ghost btn-sm" data-fab="luminous" onclick="setFabricFilter('luminous')">Luminous</button>
+            <button type="button" class="btn-ghost btn-sm" data-fab="smooth" onclick="setFabricFilter('smooth')">Smooth</button>
+            <button type="button" class="btn-ghost btn-sm" data-fab="textured" onclick="setFabricFilter('textured')">Textured</button>
+            <button type="button" class="btn-ghost btn-sm" data-fab="warm" onclick="setFabricFilter('warm')">Warm Weather</button>
+            <button type="button" class="btn-ghost btn-sm" data-fab="cold" onclick="setFabricFilter('cold')">Cold Weather</button>
+          </div>
+          <div class="text-xs text-[var(--on-surface-variant)]" id="fabric-count-badge">Showing 11 Textiles</div>
+        </div>
+
+        <div id="fabrics-grid" class="card-grid"></div>
+
+        <!-- Educational Note on Textile Specularity -->
+        <div class="panel-stone mt-12">
+          <span class="label">Textile Optics &amp; Armocromia Science</span>
+          <h3 class="subhead mt-2">How Fabric Reflectance Alters Color Perception</h3>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-4 text-sm text-[var(--on-surface-variant)]">
+            <div>
+              <div class="font-medium text-[var(--on-surface)]">1. Specular vs. Diffuse Scattering</div>
+              <p class="mt-1">Smooth filament silks and satins produce sharp specular highlights, intensifying chromatic contrast and reflecting light back onto the jawline.</p>
+            </div>
+            <div>
+              <div class="font-medium text-[var(--on-surface)]">2. Surface Micro-Shadows</div>
+              <p class="mt-1">Linen slubs, tweed bouclé, and brushed cashmere create micro-shadows that diffuse glare, forgiving low-contrast and muted skin tones.</p>
+            </div>
+            <div>
+              <div class="font-medium text-[var(--on-surface)]">3. Temperature &amp; Fiber Undertone</div>
+              <p class="mt-1">Unbleached natural linen and camel wool carry organic golden warmth, whereas mercerized cotton and synthetic filament silks lean neutral-to-cool.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- =========================================================
+           PAGE 7: SAVED STYLES
+           ========================================================= -->
+      <section id="view-saved" class="view-section" aria-labelledby="saved-title">
+        <div class="flex flex-wrap items-end justify-between gap-4 pb-6">
+          <div>
+            <span class="tag-taupe">Personal Wardrobe Archive</span>
+            <h2 id="saved-title" class="headline mt-1">Saved <em>styles</em> &amp; scans</h2>
+            <p class="lede mt-2">
+              Your curated color swatches, favorite outfit formulas, and in-store garment scan history persist automatically in local storage across sessions.
+            </p>
+          </div>
+          <div class="flex flex-wrap gap-2">
+            <button type="button" class="btn-secondary btn-sm" onclick="exportDossierJson()">
+              <i data-lucide="file-json" class="w-4 h-4" aria-hidden="true"></i>
+              <span>Export JSON Backup</span>
+            </button>
+            <button type="button" class="btn-secondary btn-sm" onclick="exportDossier()">
+              <i data-lucide="download" class="w-4 h-4" aria-hidden="true"></i>
+              <span>Export Dossier (.txt)</span>
+            </button>
+            <label for="import-json-input" class="btn-ghost btn-sm" style="cursor:pointer;">
+              <i data-lucide="upload" class="w-4 h-4" aria-hidden="true"></i>
+              <span>Import JSON</span>
+            </label>
+            <input type="file" id="import-json-input" accept=".json,application/json" class="sr-only" onchange="importDossierJson(this)">
+          </div>
+        </div>
+
+        <div class="space-y-10">
+          <!-- Saved Swatches -->
+          <div>
+            <div class="flex items-center justify-between ruled-top mb-4">
+              <span class="label">Favorite Color Swatches</span>
+              <button type="button" class="btn-ghost btn-sm" onclick="navigateTo('palette')">Add from Palette</button>
+            </div>
+            <div id="saved-colors-container"></div>
+          </div>
+
+          <!-- Saved Outfits -->
+          <div>
+            <div class="flex items-center justify-between ruled-top mb-4">
+              <span class="label">Saved Outfit Combinations</span>
+              <button type="button" class="btn-ghost btn-sm" onclick="navigateTo('outfits')">Browse Outfits</button>
+            </div>
+            <div id="saved-outfits-container"></div>
+          </div>
+
+          <!-- Clothing Scan History -->
+          <div>
+            <div class="flex items-center justify-between ruled-top mb-4">
+              <div class="flex items-center gap-3">
+                <span class="label">Clothing Color Scan Log</span>
+                <span class="tag-taupe" id="saved-scans-count">0 Records</span>
+              </div>
+              <div class="flex gap-2">
+                <button type="button" class="btn-ghost btn-sm" onclick="confirmClearHistory()">Clear Scan Log</button>
+                <button type="button" class="btn-ghost btn-sm" onclick="navigateTo('scanner')">New Garment Scan</button>
+              </div>
+            </div>
+            <div id="saved-scans-container"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- =========================================================
+           PAGE 8: PROFILE
+           ========================================================= -->
+      <section id="view-profile" class="view-section" aria-labelledby="profile-title">
+        <div class="flex flex-wrap items-end justify-between gap-4 pb-6">
+          <div>
+            <span class="tag-taupe">Style Identity &amp; Telemetry</span>
+            <h2 id="profile-title" class="headline mt-1">Personal style <em>profile</em></h2>
+            <p class="lede mt-2">
+              Manage your skin tone parameters, manual season overrides, preferred silhouette, and persisted style dossier.
+            </p>
+          </div>
+          <div class="flex flex-wrap gap-2">
+            <button type="button" class="btn-secondary btn-sm" onclick="exportDossierJson()">
+              <i data-lucide="file-json" class="w-4 h-4" aria-hidden="true"></i>
+              <span>Export Profile (JSON)</span>
+            </button>
+            <label for="import-json-profile-input" class="btn-ghost btn-sm" style="cursor:pointer;">
+              <i data-lucide="upload" class="w-4 h-4" aria-hidden="true"></i>
+              <span>Import Profile (JSON)</span>
+            </label>
+            <input type="file" id="import-json-profile-input" accept=".json,application/json" class="sr-only" onchange="importDossierJson(this)">
+          </div>
+        </div>
+
+        <div class="split-equal">
+          <form class="panel-stone flex flex-col gap-5" onsubmit="saveProfileForm(event)">
+            <span class="label">Identity &amp; Chromatic Settings</span>
+
+            <div class="field-group">
+              <label for="profile-name" class="label">Your Name</label>
+              <input type="text" id="profile-name" class="field-input" value="Elena Vance" required>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div class="field-group">
+                <label for="profile-undertone" class="label">Undertone</label>
+                <select id="profile-undertone" class="field-select" onchange="syncSeasonOptionsForProfile()">
+                  <option value="Warm">Warm</option>
+                  <option value="Cool">Cool</option>
+                  <option value="Neutral">Neutral</option>
+                </select>
+              </div>
+              <div class="field-group">
+                <label for="profile-depth" class="label">Surface Skin Depth</label>
+                <select id="profile-depth" class="field-select">
+                  <option value="Fair">Fair</option>
+                  <option value="Light">Light</option>
+                  <option value="Medium">Medium</option>
+                  <option value="Tan">Tan</option>
+                  <option value="Deep">Deep</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div class="field-group">
+                <label for="profile-season" class="label">12-Season Classification (Manual Override)</label>
+                <select id="profile-season" class="field-select"></select>
+              </div>
+              <div class="field-group">
+                <label for="profile-silhouette" class="label">Preferred Silhouette</label>
+                <select id="profile-silhouette" class="field-select">
+                  <option value="all">All Silhouettes</option>
+                  <option value="tailored">Tailored / Menswear</option>
+                  <option value="draped">Draped / Womenswear</option>
+                  <option value="minimal">Gender-Neutral Minimal</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-3 pt-1">
+              <input type="checkbox" id="profile-olive" class="w-5 h-5 accent-black cursor-pointer">
+              <label for="profile-olive" class="text-sm cursor-pointer">Include Olive undertone nuance (green-gray cast considerations)</label>
+            </div>
+
+            <div class="flex flex-wrap gap-3 pt-2">
+              <button type="submit" class="btn-primary">
+                <i data-lucide="check" class="w-4 h-4" aria-hidden="true"></i>
+                <span>Save Profile Changes</span>
+              </button>
+              <button type="button" class="btn-secondary" onclick="exportDossier()">Download Dossier (.txt)</button>
+            </div>
+          </form>
+
+          <!-- Telemetry & Data Control -->
+          <div class="flex flex-col gap-6">
+            <div class="ruled-top">
+              <span class="label">Recorded Skin Tone Telemetry</span>
+              <table class="atelier-table mt-3">
+                <thead>
+                  <tr>
+                    <th>Parameter</th>
+                    <th>Stored Value</th>
+                  </tr>
+                </thead>
+                <tbody id="profile-telemetry-body"></tbody>
+              </table>
+            </div>
+
+            <div class="ruled-top">
+              <span class="label">Methodology &amp; Privacy Guarantee</span>
+              <p class="text-sm text-[var(--on-surface-variant)] mt-2">
+                Skin tone extraction follows YCrCb and HSV masking, 3-cluster K-Means dominance, and CIELAB perceptual distance (ΔE) grounded in 12-season armocromia color theory. Only structured color parameters, favorites, and scan metadata are persisted in your browser's localStorage; photos remain strictly in local browser memory and are never uploaded.
+              </p>
+            </div>
+
+            <div class="ruled-top">
+              <span class="label">Reset Workspace &amp; LocalStorage</span>
+              <p class="text-sm text-[var(--on-surface-variant)] mt-2">Restore default profile baseline and clear saved swatches, outfits, and scan history from local storage.</p>
+              <button type="button" class="btn-ghost btn-sm mt-3" id="reset-state-btn" onclick="handleResetWorkspace(this)">Reset All Saved Data</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Global Atelier Confirmation Modal -->
+    <div id="atelier-modal" class="atelier-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <div class="atelier-modal">
+        <h3 id="modal-title" class="subhead">Confirm Action</h3>
+        <p id="modal-desc" class="text-sm text-[var(--on-surface-variant)] mt-2">Are you sure you want to proceed?</p>
+        <div class="flex justify-end gap-3 mt-6">
+          <button type="button" class="btn-ghost btn-sm" onclick="closeAtelierModal()">Cancel</button>
+          <button type="button" id="modal-confirm-btn" class="btn-primary btn-sm">Confirm</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Editorial Footer -->
+    <footer class="mt-16 pt-6 border-t border-[var(--outline)] flex flex-wrap items-center justify-between gap-4 text-xs text-[var(--on-surface-variant)]">
+      <div>
+        <span class="label text-[var(--on-surface)]">Personal Color &amp; Style Assistant</span>
+        <span class="ml-2">· 12-Season Armocromia · YCrCb/HSV &amp; CIELAB ΔE Engine</span>
+      </div>
+      <div>
+        Grounded in seasonal color theory &amp; computer-vision skin analysis (TIJER, STYLOSCAPE, Tone &amp; Fit, Tone AI).
+      </div>
+    </footer>
+  </div>
+
+  <!-- Toast feedback -->
+  <div id="atelier-toast" class="atelier-toast" role="status" aria-live="polite"></div>
+
+  <api-shim></api-shim>
+
+  <script src="app.js" defer></script>
+</body>
+</html>
