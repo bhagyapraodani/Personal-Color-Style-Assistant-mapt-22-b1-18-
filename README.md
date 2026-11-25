@@ -1,11 +1,14 @@
 # ATELIER CHROMA
 ### *Personal Color & Sartorial Intelligence Platform*
 
-[![Version](https://img.shields.io/badge/version-2.0.0-111111?style=flat-square)](https://github.com/)
+[![Live Site](https://img.shields.io/badge/Live_Site-GitHub_Pages-365e46?style=for-the-badge&logo=github)](https://bhagyapraodani.github.io/Personal-Color-Style-Assistant-mapt-22-b1-18-/)
+[![Version](https://img.shields.io/badge/version-2.0.0-111111?style=flat-square)](https://github.com/bhagyapraodani/Personal-Color-Style-Assistant-mapt-22-b1-18-)
 [![License](https://img.shields.io/badge/license-MIT-7a5c48?style=flat-square)](LICENSE)
 [![Colorimetry](https://img.shields.io/badge/color_space-CIELAB_%CE%94E-365e46?style=flat-square)](https://en.wikipedia.org/wiki/CIELAB_color_space)
-[![Client--Side](https://img.shields.io/badge/privacy-100%25_on--device-111111?style=flat-square)](https://github.com/)
-[![Architecture](https://img.shields.io/badge/architecture-HTML5_Canvas_+_ES6+-5b5752?style=flat-square)](https://github.com/)
+[![Client--Side](https://img.shields.io/badge/privacy-100%25_on--device-111111?style=flat-square)](https://github.com/bhagyapraodani/Personal-Color-Style-Assistant-mapt-22-b1-18-)
+[![Architecture](https://img.shields.io/badge/architecture-HTML5_Canvas_+_ES6+-5b5752?style=flat-square)](https://github.com/bhagyapraodani/Personal-Color-Style-Assistant-mapt-22-b1-18-)
+
+🌐 **Live Application:** [https://bhagyapraodani.github.io/Personal-Color-Style-Assistant-mapt-22-b1-18-/](https://bhagyapraodani.github.io/Personal-Color-Style-Assistant-mapt-22-b1-18-/)
 
 > **Atelier Chroma** is an on-device personal color and wardrobe intelligence system designed at the intersection of haute couture styling, Italian 12-season Armocromia, and computer-vision colorimetry. It performs real-time skin tone analysis in the browser, evaluates clothing compatibility via CIELAB $\Delta E$ perceptual distance, and curates season-calibrated capsule wardrobes.
 
@@ -13,6 +16,7 @@
 
 ## Table of Contents
 
+- [Live Site](#live-site)
 - [Overview](#overview)
 - [Key Features](#key-features)
   - [1. Atelier Dashboard](#1-atelier-dashboard)
@@ -29,6 +33,13 @@
 - [Getting Started](#getting-started)
 - [Privacy & Security](#privacy--security)
 - [License](#license)
+
+---
+
+## Live Site
+
+Access the deployed application instantly without installation:
+👉 **[https://bhagyapraodani.github.io/Personal-Color-Style-Assistant-mapt-22-b1-18-/](https://bhagyapraodani.github.io/Personal-Color-Style-Assistant-mapt-22-b1-18-/)**
 
 ---
 
@@ -166,11 +177,15 @@ Atelier Chroma rejects generic dashboard designs in favor of an **editorial, hig
 ### Prerequisites
 No dependencies or package managers required. The application runs natively in any modern web browser.
 
+### Live Deployment
+The application is live and accessible at:
+👉 **[https://bhagyapraodani.github.io/Personal-Color-Style-Assistant-mapt-22-b1-18-/](https://bhagyapraodani.github.io/Personal-Color-Style-Assistant-mapt-22-b1-18-/)**
+
 ### Running Locally
 1. Clone the repository:
    ```bash
-   git clone https://github.com/your-username/atelier-chroma.git
-   cd atelier-chroma
+   git clone https://github.com/bhagyapraodani/Personal-Color-Style-Assistant-mapt-22-b1-18-.git
+   cd Personal-Color-Style-Assistant-mapt-22-b1-18-
    ```
 2. Open [`index.html`](file:///c:/Users/my%20pc/OneDrive/Desktop/App%20Development/R4/index.html) in your browser:
    - On Windows: Double-click `index.html` or run `start index.html`
